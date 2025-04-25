@@ -56,7 +56,3 @@ also i did a code to check the links between 2 switches but it gives so small ga
 the last code i did is to feach links between switch and host ( still cant get the hosts )
 
 NOTE : it is still for testing , i will store them in csv after everything is done 
-
-
-
-pip install eventlet==0.30.2
