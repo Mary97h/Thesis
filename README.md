@@ -47,12 +47,7 @@ python3 -m --observe-links ryu.cmd.manager ryu.app.simple_switch_stp_13 ryu.app.
 
 2- then run the topology in onther terminal 
 
-3- run the code of montoring 
+3- run Matrix.py to gennerate the matrix
 
-i did untill now a code which is get all the info of the switches ports it give results while feaching links still unreachable 
+3- run the code of montoring :Full-monitor.py
 
-also i did a code to check the links between 2 switches but it gives so small gaps for timestp ( may it never take the right switches of the topology  i am checking)
-
-the last code i did is to feach links between switch and host ( still cant get the hosts )
-
-NOTE : it is still for testing , i will store them in csv after everything is done 
