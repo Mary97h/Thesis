@@ -80,16 +80,16 @@ class MinimalRyuSwitchMonitor:
             self.switches = response.json()
             print(f"Discovered {len(self.switches)} switches: {self.switches}")
             
-            topology_switches = [node for node in self.topology['nodes'] if node.startswith('s')]
-            discovered_switches = [f"s{s}" for s in self.switches]
+            #topology_switches = [node for node in self.topology['nodes'] if node.startswith('s')]
+            #discovered_switches = [f"s{s}" for s in self.switches]
             
-            missing_switches = set(topology_switches) - set(discovered_switches)
-            extra_switches = set(discovered_switches) - set(topology_switches)
+            #missing_switches = set(topology_switches) - set(discovered_switches)
+            #extra_switches = set(discovered_switches) - set(topology_switches)
             
-            if missing_switches:
-                print(f"Warning: The following switches from topology are not discovered: {missing_switches}")
-            if extra_switches:
-                print(f"Warning: Discovered switches not in topology: {extra_switches}")
+            #if missing_switches:
+                #print(f"Warning: The following switches from topology are not discovered: {missing_switches}")
+            #if extra_switches:
+                #print(f"Warning: Discovered switches not in topology: {extra_switches}")
             
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open(self.switch_csv, mode='a', newline='') as f:

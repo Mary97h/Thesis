@@ -31,8 +31,6 @@ def get_topology_matrix():
     try:
         from mininet.wifi.net import Mininet_wifi
         net = Mininet_wifi()  
-        net.getStations()
-        net.getAccessPoints()
 
         for sta in net.stations:
             associated = sta.params.get('associatedTo')
