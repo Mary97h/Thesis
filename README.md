@@ -38,16 +38,14 @@ python3 -m ryu.cmd.manager ryu.app.simple_stp_switch_13
 
 7- run the topology then wait until ryu fiish configration then test if everything is fine ( for example pingall)
 
-_______________________________________________________________________________________________________________________________________________
+---
 
-for the second step to do like a matrix for getting info from the porst and links as much as we can  , i use the rest Api folowing the documentaton of RYU with rest 
+for the second step to do like a matrix for getting info from the porst and links as much as we can , i use the rest Api folowing the documentaton of RYU with rest
 
 1- i run the controller :
 python3 -m --observe-links ryu.cmd.manager ryu.app.simple_switch_stp_13 ryu.app.ofctl_rest
 
-2- then run the topology in onther terminal 
+2- then run the topology in onther terminal: sudo python ~/Topology_injectTraffic.py
 
-3- run Matrix.py to gennerate the matrix
-
-3- run the code of montoring :Full-monitor.py
-
+3- run the code of montoring :
+python3 Fullmonitor.py --controller 127.0.0.1 --port 8080 --interval 5 --cycles 3
