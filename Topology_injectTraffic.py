@@ -133,13 +133,25 @@ def save_topology_to_file(net, filename="topology.json"):
     save_adjacency_matrix(topology)
     return topology
 
-def save_adjacency_matrix(topology):
+def save_adjacency_matrix(topology, port_stats=None):
     info("[*] Generating adjacency matrix...\n")
     
     all_nodes = topology["nodes"]
     node_index = {node: idx for idx, node in enumerate(all_nodes)}
     matrix_size = len(all_nodes)
-    adjacency_matrix = np.zeros((matrix_size, matrix_size), dtype=int)
+    adjacency_matrix = np.zeros((matrix_size, matrix_size), dtype=float)
+    
+    port_to_node_map = {}
+    for link in topology["links"]:
+        src = link["src"]
+        dst = link["dst"]
+        src_port = link.get("src_port")
+        dst_port = link.get("dst_port")
+        
+        if src_port is not None:
+            port_to_node_map[(src, src_port)] = dst
+        if dst_port is not None:
+            port_to_node_map[(dst, dst_port)] = src
     
     for link in topology["links"]:
         src = link["src"]
@@ -148,27 +160,49 @@ def save_adjacency_matrix(topology):
             if src in node_index and dst in node_index:
                 i = node_index[src]
                 j = node_index[dst]
-                adjacency_matrix[i][j] = 1
-                adjacency_matrix[j][i] = 1  
+                
+                adjacency_matrix[i][j] = 0
+                adjacency_matrix[j][i] = 0
         except KeyError as e:
             info(f"Error in adjacency matrix: {e} not found in node_index\n")
     
-    info("\n[INFO] Adjacency Matrix:\n")
+    if port_stats:
+        for node_name, ports in port_stats.items():
+            if node_name not in node_index:
+                continue
+                
+            for port_no, stats in ports.items():
+                if (node_name, port_no) in port_to_node_map:
+                    dest_node = port_to_node_map[(node_name, port_no)]
+                    if dest_node not in node_index:
+                        continue
+                        
+                    tx_mbps = stats.get('tx_mbps', 0)
+                    rx_mbps = stats.get('rx_mbps', 0)
+                    total_mbps = tx_mbps + rx_mbps
+                    
+                    i = node_index[node_name]
+                    j = node_index[dest_node]
+                    adjacency_matrix[i][j] = total_mbps
+                    adjacency_matrix[j][i] = total_mbps
+    
+    info("\n[INFO] Matrix (Bandwidth Usage in Mbps):\n")
     header = "    " + "  ".join(n.ljust(4) for n in all_nodes)
     info(header + "\n")
     
     for i, node in enumerate(all_nodes):
-        row = node.ljust(4) + " " + "  ".join(str(x).ljust(4) for x in adjacency_matrix[i])
+        row = node.ljust(4) + " " + "  ".join(f"{x:.2f}".ljust(4) for x in adjacency_matrix[i])
         info(row + "\n")
     
-    csv_filename = os.path.join(os.getcwd(), "adjacency_matrix.csv")
+    csv_filename = os.path.join(os.getcwd(), "bandwidth_matrix.csv")
     with open(csv_filename, mode='w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([""] + all_nodes)
         for i, node in enumerate(all_nodes):
-            writer.writerow([node] + list(adjacency_matrix[i]))
+            writer.writerow([node] + [f"{x:.2f}" for x in adjacency_matrix[i]])
     
-    info(f"\n[INFO] Adjacency matrix saved to {csv_filename}\n")
+    info(f"\n[INFO] Bandwidth matrix saved to {csv_filename}\n")
+    return adjacency_matrix
 
 def myNetwork():
     setup = {'protocols': "OpenFlow13"}

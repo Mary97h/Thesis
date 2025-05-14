@@ -50,13 +50,8 @@ class MinimalRyuSwitchMonitor:
         os.makedirs(self.viz_dir, exist_ok=True)
         os.makedirs(self.report_dir, exist_ok=True)
 
-        self.matrix_file = os.path.join(self.base_dir, "matrix.csv")
         self.topology_file = os.path.join(self.base_dir, "topology.json")
 
-        if not os.path.exists(self.matrix_file):
-            with open(self.matrix_file, mode='w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(['Source', 'Destination', 'Bandwidth', 'Delay'])
 
         if not os.path.exists(self.base_dir):
             os.makedirs(self.base_dir)
@@ -90,6 +85,100 @@ class MinimalRyuSwitchMonitor:
             writer.writerow(['Timestamp', 'Cycle', 'Switch DPID', 'Switch Name', 'Type'])
         
         self.current_cycle = 0
+
+    def generate_port_connections_report(self):
+        """Generate a report showing each port's connection details."""
+        port_connections_file = os.path.join(self.report_dir, f"port_connections_cycle_{self.current_cycle}.txt")
+    
+        try:
+            with open(port_connections_file, 'w') as f:
+                f.write(f"=== Port Connection Report - Cycle {self.current_cycle} ===\n")
+                f.write(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            
+                all_devices = self.switches + self.aps
+            
+                for dpid in all_devices:
+                    device_name = self.get_switch_name(dpid)
+                    device_type = "AP" if device_name.startswith('ap') else "Switch"
+                    f.write(f"\n{device_name} ({device_type}, DPID {dpid}):\n")
+                    f.write("=" * 60 + "\n")
+                    f.write(f"{'Port':<6} {'Connected To':<20} {'Remote Port':<12} {'Bandwidth':<10} {'Delay':<10}\n")
+                    f.write("-" * 60 + "\n")
+                
+                    ports = list(self.port_stats[dpid].keys())
+                
+                    try:
+                        ports.sort(key=lambda x: int(x) if isinstance(x, int) or x.isdigit() else float('inf'))
+                    except:
+                        ports.sort()
+                
+                    for port_no in ports:
+                
+                        link_info = self.find_link_info(device_name, port_no)
+                    
+                        if link_info:
+                            if link_info["src"] == device_name and link_info["src_port"] == port_no:
+                                remote_device = link_info["dst"]
+                                remote_port = link_info["dst_port"]
+                            else:
+                                remote_device = link_info["src"]
+                                remote_port = link_info["src_port"]
+                        
+                            bandwidth = link_info.get("bw", "Unknown")
+                            delay = link_info.get("delay", "Unknown")
+                        
+                            f.write(f"{port_no:<6} {remote_device:<20} {remote_port:<12} {bandwidth:<10} {delay:<10}\n")
+                        else:
+                            f.write(f"{port_no:<6} {'Not connected':<20} {'N/A':<12} {'N/A':<10} {'N/A':<10}\n")
+                f.write("\n\n=== Network Connection Summary ===\n")
+                f.write("-" * 60 + "\n")
+                f.write(f"{'Source':<15} {'Source Port':<12} {'Destination':<15} {'Dest Port':<12} {'Bandwidth':<10} {'Delay':<10}\n")
+                f.write("-" * 60 + "\n")
+            
+                for link in self.topology["links"]:
+                    src = link.get("src", "Unknown")
+                    src_port = link.get("src_port", "Unknown")
+                    dst = link.get("dst", "Unknown")
+                    dst_port = link.get("dst_port", "Unknown")
+                    bw = link.get("bw", "Unknown")
+                    delay = link.get("delay", "Unknown")
+                
+                    f.write(f"{src:<15} {src_port:<12} {dst:<15} {dst_port:<12} {bw:<10} {delay:<10}\n")
+            
+            print(f"Port connections report generated: {port_connections_file}")
+            return True
+        except Exception as e:
+            print(f"Error generating port connections report: {e}")
+            return False
+        
+    def generate_bandwidth_matrix(self):
+        """Generate and save adjacency matrix with bandwidth values."""
+        node_port_stats = {}
+        for dpid, port_data in self.port_stats.items():
+            device_name = self.get_switch_name(dpid)
+            node_port_stats[device_name] = {}
+        
+            for port_no, stats in port_data.items():
+                if dpid in self.previous_stats and port_no in self.previous_stats[dpid]:
+                    prev = self.previous_stats[dpid][port_no]
+                    curr = stats
+                    time_diff = curr['timestamp'] - prev['timestamp']
+                
+                    if time_diff > 0:
+                        tx_diff = curr['tx_bytes'] - prev['tx_bytes']
+                        rx_diff = curr['rx_bytes'] - prev['rx_bytes']
+                    
+                        tx_mbps = (tx_diff * 8) / (time_diff * 1_000_000)
+                        rx_mbps = (rx_diff * 8) / (time_diff * 1_000_000)
+                    
+                        node_port_stats[device_name][port_no] = {
+                            'tx_mbps': tx_mbps,
+                            'rx_mbps': rx_mbps,
+                            'total_mbps': tx_mbps + rx_mbps
+                        }
+        from sdn import save_adjacency_matrix 
+        save_adjacency_matrix(self.topology, node_port_stats)
+
 
     def map_dpid_to_switch_name(self):
         """Map DPIDs to switch and AP names based on topology."""
@@ -567,8 +656,10 @@ class MinimalRyuSwitchMonitor:
             self.collect_port_stats()
             self.collect_flow_stats()
             self.calculate_port_bandwidth()
+            self.generate_bandwidth_matrix()
             
             self.generate_report()
+            self.generate_port_connections_report()
             if cycle >= 2:
                 self.plot_port_bandwidth()
             
