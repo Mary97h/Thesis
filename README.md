@@ -48,4 +48,4 @@ python3 -m --observe-links ryu.cmd.manager ryu.app.simple_switch_stp_13 ryu.app.
 2- then run the topology in onther terminal: sudo python ~/Topology_injectTraffic.py
 
 3- run the code of montoring :
-python3 Fullmonitor.py --controller 127.0.0.1 --port 8080 --interval 5 --cycles 3
+sudo python3 Fullmonitor.py --controller 127.0.0.1 --port 8080 --interval 5 --cycles 3
