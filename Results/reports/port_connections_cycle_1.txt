@@ -1,0 +1,226 @@
+=== Port Connection Report - Cycle 1 ===
+Time: 2025-05-14 14:03:04
+
+
+s0 (Switch, DPID 29206341865539):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s1                   -1           100        5ms       
+2      s2                   3            100        5ms       
+3      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+s1 (Switch, DPID 1):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s5                   1            100        5ms       
+2      s3                   1            100        5ms       
+3      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+s2 (Switch, DPID 2):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s4                   1            100        5ms       
+2      s6                   1            100        5ms       
+3      s0                   2            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s3 (Switch, DPID 3):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s1                   2            100        5ms       
+2      s8                   1            100        5ms       
+3      s7                   2            100        5ms       
+4      h8                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s4 (Switch, DPID 4):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s2                   1            100        5ms       
+2      s7                   1            100        5ms       
+3      s8                   2            100        5ms       
+4      h5                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s5 (Switch, DPID 5):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s1                   1            100        5ms       
+2      s9                   1            100        5ms       
+3      s10                  2            100        5ms       
+4      h6                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s6 (Switch, DPID 6):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s2                   2            100        5ms       
+2      s10                  1            100        5ms       
+3      s9                   2            100        5ms       
+4      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+s7 (Switch, DPID 7):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s4                   2            100        5ms       
+2      s3                   3            100        5ms       
+3      ap1                  2            100        5ms       
+4      ap5                  -1           100        5ms       
+5      h1                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s8 (Switch, DPID 8):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s3                   2            100        5ms       
+2      s4                   3            100        5ms       
+3      ap2                  2            100        5ms       
+4      ap6                  -1           100        5ms       
+5      h2                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s9 (Switch, DPID 9):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s5                   2            100        5ms       
+2      s6                   3            100        5ms       
+3      ap3                  2            100        5ms       
+4      ap7                  -1           100        5ms       
+5      h3                   0            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+s10 (Switch, DPID 10):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      s6                   2            100        5ms       
+2      s5                   3            100        5ms       
+3      ap4                  2            100        5ms       
+4      ap8                  -1           100        5ms       
+5      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+ap1 (AP, DPID 11):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      s7                   3            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+ap2 (AP, DPID 12):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      s8                   3            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+ap3 (AP, DPID 13):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      s9                   3            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+ap4 (AP, DPID 14):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      s10                  3            100        5ms       
+LOCAL  special              0            inf        0ms       
+
+ap5 (AP, DPID 15):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+ap6 (AP, DPID 16):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+ap7 (AP, DPID 17):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+ap8 (AP, DPID 18):
+============================================================
+Port   Connected To         Remote Port  Bandwidth  Delay     
+------------------------------------------------------------
+1      wifi                 -1           100        5ms       
+2      Not connected        N/A          N/A        N/A       
+LOCAL  special              0            inf        0ms       
+
+
+=== Network Connection Summary ===
+------------------------------------------------------------
+Source          Source Port  Destination     Dest Port    Bandwidth  Delay     
+------------------------------------------------------------
+s0              -1           h0              0            100        5ms       
+h8              0            s3              4            100        5ms       
+h1              0            s7              5            100        5ms       
+h5              0            s4              4            100        5ms       
+h2              0            s8              5            100        5ms       
+h3              0            s9              5            100        5ms       
+h6              0            s5              4            100        5ms       
+s6              -1           h7              0            100        5ms       
+s10             -1           h4              0            100        5ms       
+s1              -1           s0              1            100        5ms       
+s0              2            s2              3            100        5ms       
+s1              1            s5              1            100        5ms       
+s1              2            s3              1            100        5ms       
+s2              1            s4              1            100        5ms       
+s2              2            s6              1            100        5ms       
+s3              2            s8              1            100        5ms       
+s3              3            s7              2            100        5ms       
+s4              2            s7              1            100        5ms       
+s4              3            s8              2            100        5ms       
+s5              2            s9              1            100        5ms       
+s5              3            s10             2            100        5ms       
+s6              2            s10             1            100        5ms       
+s6              3            s9              2            100        5ms       
+s7              3            ap1             2            100        5ms       
+ap5             -1           s7              4            100        5ms       
+s8              3            ap2             2            100        5ms       
+ap6             -1           s8              4            100        5ms       
+s9              3            ap3             2            100        5ms       
+ap7             -1           s9              4            100        5ms       
+s10             3            ap4             2            100        5ms       
+ap8             -1           s10             4            100        5ms       
+sta1            0            wifi            -1           100        5ms       
+sta2            0            wifi            -1           100        5ms       
+sta3            0            wifi            -1           100        5ms       
+ap1             1            wifi            -1           100        5ms       
+ap2             1            wifi            -1           100        5ms       
+ap3             1            wifi            -1           100        5ms       
+ap4             1            wifi            -1           100        5ms       
+ap5             1            wifi            -1           100        5ms       
+ap6             1            wifi            -1           100        5ms       
+ap7             1            wifi            -1           100        5ms       
+ap8             1            wifi            -1           100        5ms       
