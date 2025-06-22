@@ -1,0 +1,462 @@
+[
+  {
+    "success": true,
+    "selected_ap": "ap1",
+    "available_aps": [
+      [
+        "ap1",
+        -79.0
+      ],
+      [
+        "ap5",
+        -82.0
+      ],
+      [
+        "ap6",
+        -84.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 25,
+    "protocol": "tcp",
+    "avg_mbps": 1.1874036359847981,
+    "timestamp": "20250622_172350",
+    "selected_ap_available_rbs_after_alloc": 27,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627430.3512688,
+    "error": "",
+    "port_used": 5202,
+    "station": "sta2",
+    "estimated_cqi": 7,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap1",
+        "rssi": -79.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 4718592,
+    "tx_mbps": 1.2579446781726527,
+    "rx_bytes": 4456448,
+    "rx_mbps": 1.1874036359847981
+  },
+  {
+    "success": true,
+    "selected_ap": "ap2",
+    "available_aps": [
+      [
+        "ap2",
+        -31.0
+      ],
+      [
+        "ap6",
+        -84.0
+      ]
+    ],
+    "bandwidth_mbps": 40,
+    "duration_seconds": 30,
+    "required_rbs": 29,
+    "protocol": "tcp",
+    "avg_mbps": 0.9777172027925826,
+    "timestamp": "20250622_172350",
+    "selected_ap_available_rbs_after_alloc": 23,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627430.8432868,
+    "error": "",
+    "port_used": 5203,
+    "station": "sta3",
+    "estimated_cqi": 15,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap2",
+        "rssi": -31.0,
+        "cqi": 15,
+        "required_rbs": 29,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 3801088,
+    "tx_mbps": 1.0131727398871155,
+    "rx_bytes": 3670016,
+    "rx_mbps": 0.9777172027925826
+  },
+  {
+    "success": true,
+    "selected_ap": "ap6",
+    "available_aps": [
+      [
+        "ap2",
+        -72.0
+      ],
+      [
+        "ap6",
+        -86.0
+      ],
+      [
+        "ap7",
+        -89.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 60,
+    "required_rbs": 50,
+    "protocol": "tcp",
+    "avg_mbps": 1.816962600081568,
+    "timestamp": "20250622_172421",
+    "selected_ap_available_rbs_after_alloc": 2,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627461.9689527,
+    "error": "",
+    "port_used": 5204,
+    "station": "sta4",
+    "estimated_cqi": 5,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap2",
+        "rssi": -72.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 23,
+        "total_rbs": 52,
+        "success": false
+      },
+      {
+        "ap_name": "ap6",
+        "rssi": -86.0,
+        "cqi": 5,
+        "required_rbs": 50,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 13762560,
+    "tx_mbps": 1.8347687461555013,
+    "rx_bytes": 13631488,
+    "rx_mbps": 1.816962600081568
+  },
+  {
+    "success": true,
+    "selected_ap": "ap3",
+    "available_aps": [
+      [
+        "ap3",
+        -78.0
+      ],
+      [
+        "ap7",
+        -81.0
+      ],
+      [
+        "ap2",
+        -89.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 60,
+    "required_rbs": 25,
+    "protocol": "tcp",
+    "avg_mbps": 1.834635568979497,
+    "timestamp": "20250622_172423",
+    "selected_ap_available_rbs_after_alloc": 27,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627463.9149263,
+    "error": "",
+    "port_used": 5205,
+    "station": "sta5",
+    "estimated_cqi": 7,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap3",
+        "rssi": -78.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 13893632,
+    "tx_mbps": 1.8523363267387045,
+    "rx_bytes": 13762560,
+    "rx_mbps": 1.834635568979497
+  },
+  {
+    "success": true,
+    "selected_ap": "ap7",
+    "available_aps": [
+      [
+        "ap7",
+        -76.0
+      ],
+      [
+        "ap3",
+        -77.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 25,
+    "protocol": "tcp",
+    "avg_mbps": 0.5538564760675977,
+    "timestamp": "20250622_172355",
+    "selected_ap_available_rbs_after_alloc": 27,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627435.388431,
+    "error": "",
+    "port_used": 5206,
+    "station": "sta6",
+    "estimated_cqi": 7,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap7",
+        "rssi": -76.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 2228224,
+    "tx_mbps": 0.594109752675683,
+    "rx_bytes": 2097152,
+    "rx_mbps": 0.5538564760675977
+  },
+  {
+    "success": true,
+    "selected_ap": "ap8",
+    "available_aps": [
+      [
+        "ap8",
+        -82.0
+      ],
+      [
+        "ap3",
+        -85.0
+      ],
+      [
+        "ap4",
+        -86.0
+      ],
+      [
+        "ap7",
+        -89.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 50,
+    "protocol": "tcp",
+    "avg_mbps": 0.7331943400041074,
+    "timestamp": "20250622_172357",
+    "selected_ap_available_rbs_after_alloc": 2,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627437.3680732,
+    "error": "",
+    "port_used": 5207,
+    "station": "sta7",
+    "estimated_cqi": 5,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap8",
+        "rssi": -82.0,
+        "cqi": 5,
+        "required_rbs": 50,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 2883584,
+    "tx_mbps": 0.7686428444527847,
+    "rx_bytes": 2752512,
+    "rx_mbps": 0.7331943400041074
+  },
+  {
+    "success": true,
+    "selected_ap": "ap5",
+    "available_aps": [
+      [
+        "ap6",
+        -78.0
+      ],
+      [
+        "ap1",
+        -90.0
+      ],
+      [
+        "ap2",
+        -90.0
+      ],
+      [
+        "ap5",
+        -90.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 50,
+    "protocol": "tcp",
+    "avg_mbps": 1.3621386833570452,
+    "timestamp": "20250622_172353",
+    "selected_ap_available_rbs_after_alloc": 2,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627433.0470648,
+    "error": "",
+    "port_used": 5208,
+    "station": "sta8",
+    "estimated_cqi": 5,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap6",
+        "rssi": -78.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 2,
+        "total_rbs": 52,
+        "success": false
+      },
+      {
+        "ap_name": "ap1",
+        "rssi": -90.0,
+        "cqi": 5,
+        "required_rbs": 50,
+        "available_rbs_before": 27,
+        "total_rbs": 52,
+        "success": false
+      },
+      {
+        "ap_name": "ap2",
+        "rssi": -90.0,
+        "cqi": 5,
+        "required_rbs": 50,
+        "available_rbs_before": 23,
+        "total_rbs": 52,
+        "success": false
+      },
+      {
+        "ap_name": "ap5",
+        "rssi": -90.0,
+        "cqi": 5,
+        "required_rbs": 50,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 5373952,
+    "tx_mbps": 1.432618302948627,
+    "rx_bytes": 5111808,
+    "rx_mbps": 1.3621386833570452
+  },
+  {
+    "success": true,
+    "selected_ap": "ap4",
+    "available_aps": [
+      [
+        "ap4",
+        -56.0
+      ],
+      [
+        "ap8",
+        -81.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 13,
+    "protocol": "tcp",
+    "avg_mbps": 0.40669201523951964,
+    "timestamp": "20250622_172353",
+    "selected_ap_available_rbs_after_alloc": 39,
+    "selected_ap_available_rbs_before_alloc": 52,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627433.9211917,
+    "error": "",
+    "port_used": 5209,
+    "station": "sta9",
+    "estimated_cqi": 12,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap4",
+        "rssi": -56.0,
+        "cqi": 12,
+        "required_rbs": 13,
+        "available_rbs_before": 52,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 1835008,
+    "tx_mbps": 0.4891340738639878,
+    "rx_bytes": 1526304,
+    "rx_mbps": 0.40669201523951964
+  },
+  {
+    "success": true,
+    "selected_ap": "ap1",
+    "available_aps": [
+      [
+        "ap5",
+        -65.0
+      ],
+      [
+        "ap1",
+        -79.0
+      ]
+    ],
+    "bandwidth_mbps": 15,
+    "duration_seconds": 30,
+    "required_rbs": 25,
+    "protocol": "tcp",
+    "avg_mbps": 1.2888875940060316,
+    "timestamp": "20250622_172356",
+    "selected_ap_available_rbs_after_alloc": 2,
+    "selected_ap_available_rbs_before_alloc": 27,
+    "selected_ap_total_rbs": 52,
+    "allocation_start_time": 1750627436.325257,
+    "error": "",
+    "port_used": 5210,
+    "station": "sta10",
+    "estimated_cqi": 7,
+    "allocation_attempts": [
+      {
+        "ap_name": "ap5",
+        "rssi": -65.0,
+        "cqi": 10,
+        "required_rbs": 15,
+        "available_rbs_before": 2,
+        "total_rbs": 52,
+        "success": false
+      },
+      {
+        "ap_name": "ap1",
+        "rssi": -79.0,
+        "cqi": 7,
+        "required_rbs": 25,
+        "available_rbs_before": 27,
+        "total_rbs": 52,
+        "success": true
+      }
+    ],
+    "tx_bytes": 4980736,
+    "tx_mbps": 1.3280008734714832,
+    "rx_bytes": 4849664,
+    "rx_mbps": 1.2888875940060316
+  }
+]

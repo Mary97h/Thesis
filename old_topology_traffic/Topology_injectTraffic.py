@@ -6,7 +6,7 @@ from mn_wifi.node import Station, OVSKernelAP
 from mn_wifi.cli import CLI
 from mn_wifi.link import wmediumd
 from mn_wifi.wmediumdConnector import interference
-from subprocess import call
+from subprocess import call, Popen
 import os
 import time
 import json
@@ -16,11 +16,9 @@ import re
 from collections import defaultdict
 
 
-def calculate_free_bandwidth(link_usage, max_bw=100):
-    return max_bw - link_usage
-
 def inject_custom_traffic(net):
-
+    info("*** Injecting custom traffic...\n")
+    
     h0 = net.get('h0')
     h8 = net.get('h8')
     h1 = net.get('h1')
@@ -30,45 +28,34 @@ def inject_custom_traffic(net):
         host.cmd('pkill -9 ping')
     
     info("Starting Iperf UDP server on h0...\n")
-    h0_server = h0.popen('iperf -s -u -p 5001')
+    h0.cmd('iperf -s -u -p 5001 &')
     
     time.sleep(1)
     server_check = h0.cmd('ps aux | grep "iperf -s -u" | grep -v grep')
     if not server_check:
-        info("*** ERROR: Failed to start iperf server on h0. Retrying...\n")
-        h0_server = h0.popen('iperf -s -u -p 5001')
+        info("ERROR: Failed to start iperf server on h0. Retrying...\n")
+        h0.cmd('iperf -s -u -p 5001 &')
         time.sleep(1)
 
     info("Starting UDP client from h8 to h0...\n")
-    h8_client = h8.popen(f'iperf -u -c {h0.IP()} -p 5001 -b 5M -t 9999')
+    h8.cmd(f'iperf -u -c {h0.IP()} -p 5001 -b 5M -t 9999 &')
     
     time.sleep(1)
     client_check = h8.cmd('ps aux | grep "iperf -u -c" | grep -v grep')
     if not client_check:
-        info("*** ERROR: Failed to start iperf client on h8. Retrying...\n")
-        h8_client = h8.popen(f'iperf -u -c {h0.IP()} -p 5001 -b 20M -l 1470 -t 9999')
+        info("ERROR: Failed to start iperf client on h8. Retrying...\n")
+        h8.cmd(f'iperf -u -c {h0.IP()} -p 5001 -b 20M -l 1470 -t 9999 &')
 
     info("Starting background traffic (ping) between h1 and h8...\n")
-    h1_ping = h1.popen(f'ping {h8.IP()} -i 0.2 -s 1000')
+    h1.cmd(f'ping {h8.IP()} -i 0.2 -s 1000 > /dev/null &')
     
     info("Starting TCP background traffic between h1 and h8...\n")
-    h1_server = h1.popen('iperf -s -p 5002')
+    h1.cmd('iperf -s -p 5002 &')
     time.sleep(1)
-    h8_tcp = h8.popen(f'iperf -c {h1.IP()} -p 5002 -b 5M -t 9999') 
+    h8.cmd(f'iperf -c {h1.IP()} -p 5002 -b 5M -t 9999 &') 
 
     time.sleep(2)
-    info("\n=== Traffic verification ===\n")
-    iperf_check = h0.cmd('netstat -anp | grep 5001')
-    info(f"UDP server status on h0: {'ESTABLISHED' in iperf_check}\n")
-    info(f"Server netstat: {iperf_check}\n")
-    
-    tcp_check = h1.cmd('netstat -anp | grep 5002')
-    info(f"TCP server status on h1: {'ESTABLISHED' in tcp_check}\n")
-    info(f"TCP server netstat: {tcp_check}\n")
-    
-    ping_check = h1.cmd('ps aux | grep ping | grep -v grep')
-    info(f"Ping active: {len(ping_check) > 0}\n")
-
+   
 def save_topology_to_file(net, filename="topology.json"):
     info("[*] Saving topology to JSON file...\n")
     
@@ -166,6 +153,7 @@ def save_adjacency_matrix(topology, port_stats=None):
         except KeyError as e:
             info(f"Error in adjacency matrix: {e} not found in node_index\n")
     
+   
     if port_stats:
         for node_name, ports in port_stats.items():
             if node_name not in node_index:
@@ -186,14 +174,8 @@ def save_adjacency_matrix(topology, port_stats=None):
                     adjacency_matrix[i][j] = total_mbps
                     adjacency_matrix[j][i] = total_mbps
     
-    info("\n[INFO] Matrix (Bandwidth Usage in Mbps):\n")
-    header = "    " + "  ".join(n.ljust(4) for n in all_nodes)
-    info(header + "\n")
-    
-    for i, node in enumerate(all_nodes):
-        row = node.ljust(4) + " " + "  ".join(f"{x:.2f}".ljust(4) for x in adjacency_matrix[i])
-        info(row + "\n")
-    
+    info("[*] Adjacency matrix generated successfully\n")
+
     csv_filename = os.path.join(os.getcwd(), "bandwidth_matrix.csv")
     with open(csv_filename, mode='w', newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -219,12 +201,13 @@ def myNetwork():
     class DPIDSwitch(OVSKernelSwitch):
         def __init__(self, name, dpid=None, **kwargs):
             if dpid is not None:
-                dpid = str(dpid)
+                dpid = dpid.replace(':', '') 
             OVSKernelSwitch.__init__(self, name, dpid=dpid, **kwargs)
 
     class DPIDAP(OVSKernelAP):
         def __init__(self, name, dpid=None, **kwargs):
-            dpid = str(dpid) if dpid is not None else None
+            if dpid is not None:
+                dpid = dpid.replace(':', '')
             OVSKernelAP.__init__(self, name, dpid=dpid, **kwargs)
 
     info('*** Add switches/APs\n')
@@ -279,8 +262,8 @@ def myNetwork():
     net.configureWifiNodes()
 
     info('*** Add links\n')
-    link_opts = dict(cls=TCLink, bw=100)##max_queue_size=1000)
-    
+    link_opts = dict(cls=TCLink, bw=100, delay='5ms', use_htb=True, r2q=100)
+
     net.addLink(s1, s5, **link_opts)
     net.addLink(s2, s4, **link_opts)
     net.addLink(s1, s3, **link_opts)
@@ -313,149 +296,67 @@ def myNetwork():
     net.addLink(s6, h7, **link_opts)
     net.addLink(s10, h4, **link_opts)
 
-    net.plotGraph(max_x=1000, max_y=1000)
+    try:
+        net.plotGraph(max_x=1500, max_y=1000)
+    except Exception as e:
+        info(f"*** WARNING: Could not plot graph: {e}\n")
 
     info('*** Starting network\n')
     net.build()
 
-    # Create a wondershaper for solve link error after setting it 100mbps
-    with open('/tmp/wondershaper.py', 'w') as f:
-        f.write('''#!/usr/bin/python
-import os
-import sys
-import subprocess
+    info('*** Applying traffic control to all interfaces\n')
+    time.sleep(1)
+    all_success = True
+    for node in net.switches + net.aps + net.stations + net.hosts:
+        for intf in node.intfList():
+            if intf.name != 'lo':
+                try:
+                    node.cmd(f'tc qdisc del dev {intf.name} root')
+                    node.cmd(f'tc qdisc add dev {intf.name} root handle 1: htb default 10 r2q 100')
+                    node.cmd(f'tc class add dev {intf.name} parent 1: classid 1:10 htb rate 100Mbit ceil 100Mbit')
+                    info(f" - Applied tc htb with fixed r2q to {intf.name}\n")
+                except Exception as e:
+                    all_success = False
+                    info(f"eRROR applying traffic control to {intf.name}: {e}\n")
 
-def clear_tc(iface):
-    """Clear all traffic control settings from interface"""
-    commands = [
-        f"tc qdisc del dev {iface} root 2>/dev/null",
-        f"tc qdisc del dev {iface} ingress 2>/dev/null"
-    ]
-    for cmd in commands:
-        subprocess.call(cmd, shell=True)
-
-def apply_shaping(iface, download=None, upload=None):
-    """Apply traffic shaping to interface using wondershaper approach"""
-    # Clear any existing TC configuration
-    clear_tc(iface)
-    
-    # Parameters
-    quantum = 6000  # Same as wondershaper
-    
-    if upload:
-        # Create root qdisc with proper r2q value
-        subprocess.call(f"tc qdisc add dev {iface} root handle 1: htb default 20 r2q 1", shell=True)
-        
-        # Create main class with rate limit
-        subprocess.call(f"tc class add dev {iface} parent 1: classid 1:1 htb rate {upload}Mbit", shell=True)
-        
-        # High priority class (20% of bandwidth, can borrow up to 95%)
-        rate = max(1, int(20 * upload / 100))
-        ceil = int(95 * upload / 100)
-        subprocess.call(f"tc class add dev {iface} parent 1:1 classid 1:10 htb rate {rate}Mbit ceil {ceil}Mbit prio 1", shell=True)
-        
-        # Default class (40% of bandwidth, can borrow up to 95%)
-        rate = max(1, int(40 * upload / 100))
-        subprocess.call(f"tc class add dev {iface} parent 1:1 classid 1:20 htb rate {rate}Mbit ceil {ceil}Mbit prio 2", shell=True)
-        
-        # Low priority class (20% of bandwidth, can borrow up to 90%)
-        rate = max(1, int(20 * upload / 100))
-        ceil = int(90 * upload / 100)
-        subprocess.call(f"tc class add dev {iface} parent 1:1 classid 1:30 htb rate {rate}Mbit ceil {ceil}Mbit prio 3", shell=True)
-        
-        # Add SFQ queuing to each class with proper quantum
-        for handle in [10, 20, 30]:
-            subprocess.call(f"tc qdisc add dev {iface} parent 1:{handle} handle {handle}: sfq perturb 10 quantum {quantum}", shell=True)
-        
-        # Add filters based on TOS
-        subprocess.call(f"tc filter add dev {iface} parent 1: protocol ip prio 10 u32 match ip tos 0x10 0xff flowid 1:10", shell=True)
-        
-        # ICMP gets high priority
-        subprocess.call(f"tc filter add dev {iface} parent 1: protocol ip prio 11 u32 match ip protocol 1 0xff flowid 1:10", shell=True)
-        
-        # Small packets get high priority
-        subprocess.call(f"""tc filter add dev {iface} parent 1: protocol ip prio 12 u32 \\
-            match ip protocol 6 0xff \\
-            match u8 0x05 0x0f at 0 \\
-            match u16 0x0000 0xffc0 at 2 \\
-            flowid 1:10""", shell=True)
-        
-        # Default class for everything else
-        subprocess.call(f"tc filter add dev {iface} parent 1: protocol ip prio 18 u32 match ip dst 0.0.0.0/0 flowid 1:20", shell=True)
-    
-    if download:
-        # For download shaping, need to create IFB device and redirect ingress to it
-        subprocess.call("modprobe ifb numifbs=1", shell=True)
-        subprocess.call("ip link set dev ifb0 up", shell=True)
-        
-        # Redirect ingress to ifb0
-        subprocess.call(f"tc qdisc add dev {iface} handle ffff: ingress", shell=True)
-        subprocess.call(f"tc filter add dev {iface} parent ffff: protocol ip u32 match u32 0 0 action mirred egress redirect dev ifb0", shell=True)
-        
-        # Set up HTB on ifb0
-        subprocess.call(f"tc qdisc add dev ifb0 root handle 2: htb r2q 1", shell=True)
-        subprocess.call(f"tc class add dev ifb0 parent 2: classid 2:1 htb rate {download}Mbit", shell=True)
-        
-        # Add filter for all IP traffic
-        subprocess.call(f"tc filter add dev ifb0 protocol ip parent 2: prio 1 u32 match ip src 0.0.0.0/0 flowid 2:1", shell=True)
-
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: {sys.argv[0]} <interface> [clear|status|shape] [upload_mbps] [download_mbps]")
-        sys.exit(1)
-    
-    iface = sys.argv[1]
-    mode = sys.argv[2]
-    
-    if mode == "clear":
-        clear_tc(iface)
-    elif mode == "status":
-        subprocess.call(f"tc -s qdisc ls dev {iface}", shell=True)
-        subprocess.call(f"tc -s class ls dev {iface}", shell=True)
-    elif mode == "shape":
-        if len(sys.argv) < 4:
-            print("For shape mode, provide at least one of upload or download limits")
-            sys.exit(1)
-        
-        upload = float(sys.argv[3]) if len(sys.argv) > 3 else None
-        download = float(sys.argv[4]) if len(sys.argv) > 4 else None
-        apply_shaping(iface, download, upload)
-    else:
-        print(f"Unknown mode: {mode}")
-        sys.exit(1)
-''')
-    os.chmod('/tmp/wondershaper.py', 0o755)
+    if all_success:
+        info("applied traffic control to all interfaces\n")  
 
     info('*** Starting controllers\n')
     for controller in net.controllers:
         controller.start()
 
     info('*** Starting switches/APs\n')
-    for sw in ['s0', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10',
-               'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8']:
-        net.get(sw).start([c0])
+    all_switches = ['s0', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10',
+                    'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8']
+    
+    for sw in all_switches:
+        try:
+            net.get(sw).start([c0])
+        except Exception as e:
+            info(f"*** ERROR starting {sw}: {e}\n")
 
-    info("*** Injecting custom traffic...\n")
-    inject_custom_traffic(net)
+    try:
+        info("*** Injecting custom traffic...\n")
+        inject_custom_traffic(net)
+    except Exception as e:
+        info(f"*** ERROR injecting traffic: {e}\n")
 
-    for sw in ['s0', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10',
-               'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8']:
-        device = net.get(sw)
-        dpid = device.dpid
-        info(f"*** {sw} has DPID: {dpid}\n")
-        device.cmd(f"sudo ovs-vsctl set Bridge {sw} other_config:datapath-id={dpid}")
-        device.cmd(f"sudo ovs-vsctl set Bridge {sw} other-config:dp-desc={sw}")
+    for sw in all_switches:
+        try:
+            device = net.get(sw)
+            dpid = device.dpid
+            info(f"*** {sw} has DPID: {dpid}\n")
+            device.cmd(f"sudo ovs-vsctl set Bridge {sw} other_config:datapath-id={dpid}")
+            device.cmd(f"sudo ovs-vsctl set Bridge {sw} other-config:dp-desc=\"{sw}\"")
+        except Exception as e:
+            info(f"*** ERROR configuring {sw}: {e}\n")
             
-    info("*** Saving network topology files\n")
-    topology = save_topology_to_file(net)
-
-    info('*** Applying wondershaper traffic control to all interfaces\n')
-    time.sleep(1)
-    for node in net.switches + net.aps + net.stations + net.hosts:
-        for intf in node.intfList():
-            if intf.name != 'lo':
-                node.cmd(f'/tmp/wondershaper.py {intf.name} shape 100 100')
-                info(f" - Applied wondershaper to {intf.name}\n")
+    try:
+        info("*** Saving network topology files\n")
+        topology = save_topology_to_file(net)
+    except Exception as e:
+        info(f"*** ERROR saving topology: {e}\n")
 
     CLI(net)
     net.stop()
