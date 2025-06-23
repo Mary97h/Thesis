@@ -112,16 +112,18 @@ class NetworkTester:
         if not (sta1 and h0):
             return False
             
-        video_path = "/home/wifi/test-video/test.mpg"
+        video_path = "/home/wifi/test-video/HD_fixed.mp4"
         if not os.path.exists(video_path):
             os.makedirs("/home/wifi/test-video", exist_ok=True)
             cmd = f"ffmpeg -f lavfi -i testsrc=duration=60:size=360x240:rate=30 -f lavfi -i sine=frequency=1000:duration=60 -c:v libx264 -preset ultrafast -c:a aac -shortest {video_path}"
             os.system(cmd)
             
         h0.cmd("pkill -f 'cvlc'")
-        h0.cmd("sudo -u wifi cvlc udp://@:1234 --sout file/ts:/tmp/sta1_to_h0_video.ts --run-time=120 --play-and-exit > /tmp/vlc_recv_sta1.log 2>&1 &")
+        h0.cmd("sudo -u wifi cvlc udp://@:1234 --network-caching=1500 --sout file/ts:/tmp/sta1_to_h0_video.ts --run-time=180 --play-and-exit > /tmp/vlc_recv_sta1.log 2>&1 &")
+
         time.sleep(5)
-        sta1.cmd("sudo -u wifi cvlc --intf dummy /home/wifi/test-video/test.mpv --sout '#udp{dst=10.0.0.1:1234}' --play-and-exit > /tmp/vlc_send_sta1.log 2>&1 &")
+        sta1.cmd("sudo -u wifi cvlc --intf dummy /home/wifi/test-video/HD_fixed.mp4 --sout '#udp{dst=10.0.0.1:1234}' --sout-ffmpeg-strict=-2 --play-and-exit > /tmp/vlc_send_sta1.log 2>&1 &")
+
         return True
     
     def start_servers(self, scenarios):
@@ -139,7 +141,7 @@ class NetworkTester:
                             server_map[(host, port)] = True
                             
     def inject_background_traffic(self):
-        flows = [("h8", "h4", "20M")
+        flows = [("h8", "h4", "20M"),
                  ("h5", "h10", "20M")]
         
         for i, (src, dst, bw) in enumerate(flows, 4000):

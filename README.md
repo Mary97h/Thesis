@@ -72,4 +72,4 @@ py net.save_topology()
 3\_\_\_ to run the traffic inside mininet run :
 py net.main_traffic_test()
 
-- the recived vedio is in tmp folder
+- the recived vedio will be in tmp folder , also you will see the logs of the reciver there
